@@ -68,6 +68,24 @@ io.on("validate", (inData, inCallback) => {
 }); /* End validate handler. */
 
 
+/**
+  * Client emits this to get a list of all user currently known to the server.
+  *
+  * inData
+  *   { }
+  *
+  * Callback
+  *   <the users collection>
+  */
+io.on("listUsers", (inData, inCallback) => {
+
+    console.log("\n\nMSG: listUsers", inData);
+
+    console.log("Returning: " + JSON.stringify(users));
+    inCallback(users);
+
+}); /* End listUsers handler. */
+
 // --------------------------------------------- ROOM MESSAGES ---------------------------------------------
 
 
