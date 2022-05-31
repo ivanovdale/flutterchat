@@ -22,7 +22,46 @@ const io = require("socket.io")(require("http").createServer(function () { }).li
  * Handle the socket connection event.  All other events must be hooked up inside this.
  */
 io.on("connection", io => {
-
-
     console.log("\n\nConnection established with a client");
 });
+
+// --------------------------------------------- USER MESSAGES ---------------------------------------------
+
+/**
+ * Client emits this to validate the user.
+ *
+ * inData
+ *   { userName : "", password : "" }
+ *
+ * Callback
+ *   { status : "ok|fail|created" }
+ * Broadcast (only if status=created)
+ *   newUser <the users collection>
+ */
+io.on("validate", (inData, inCallback) => {
+
+    console.log("\n\nMSG: validate");
+
+    console.log(`inData = ${JSON.stringify(inData)}`);
+
+    const user = users[inData.userName];
+    console.log(`user = ${JSON.stringify(user)}`);
+    if (user) {
+        if (user.password === inData.password) {
+            console.log("User logged in");
+            inCallback({ status: "ok" });
+        } else {
+            console.log("Password incorrect");
+            inCallback({ status: "fail" });
+        }
+    } else {
+        console.log("User created");
+        console.log(`users = ${JSON.stringify(users)}`);
+        users[inData.userName] = inData;
+        console.log(`users = ${JSON.stringify(users)}`);
+        // noinspection JSUnresolvedVariable
+        io.broadcast.emit("newUser", users);
+        inCallback({ status: "created" });
+    }
+
+}); /* End validate handler. */
