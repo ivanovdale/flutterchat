@@ -27,6 +27,7 @@ io.on("connection", io => {
 
 // --------------------------------------------- USER MESSAGES ---------------------------------------------
 
+
 /**
  * Client emits this to validate the user.
  *
@@ -65,3 +66,64 @@ io.on("validate", (inData, inCallback) => {
     }
 
 }); /* End validate handler. */
+
+
+// --------------------------------------------- ROOM MESSAGES ---------------------------------------------
+
+
+/**
+ * Client emits this to get a list of rooms.
+ *
+ * inData
+ *   { }
+ *
+ * Callback
+ *   <the rooms collection>
+ */
+io.on("listRooms", (inData, inCallback) => {
+
+    console.log("\n\nMSG: listRooms", rooms);
+
+    console.log("Returning: " + JSON.stringify(rooms));
+    inCallback(rooms);
+
+}); /* End listRooms handler. */
+
+/**
+ * Client emits this to create a room.
+ *
+ * inData
+ *   { roomName : "", description : "", maxPeople : 99, private : true|false, creator : "" }
+ *
+ * If roomName not already in use:
+ *   Broadcast
+ *     created <the rooms collection>
+ *   Callback
+ *     { status : "created", rooms : <the rooms collection> }
+ *
+ * If room name is already in use:
+ *   Callback
+ *     { status : "exists" }
+ *
+ */
+io.on("create", (inData, inCallback) => {
+
+    console.log("\n\nMSG: create", inData);
+
+    // noinspection JSUnresolvedVariable
+    if (rooms[inData.roomName]) {
+        console.log("Room already exists");
+        inCallback({ status: "exists" });
+    } else {
+        console.log("Creating room");
+        inData.users = {};
+        console.log(`inData: ${JSON.stringify(inData)}`);
+        console.log(`rooms = ${JSON.stringify(rooms)}`);
+        rooms[inData.roomName] = inData;
+        console.log(`rooms = ${JSON.stringify(rooms)}`);
+        // noinspection JSUnresolvedVariable
+        io.broadcast.emit("created", rooms);
+        inCallback({ status: "created", rooms: rooms });
+    }
+
+}); /* End create handler. */
