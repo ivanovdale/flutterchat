@@ -228,6 +228,29 @@ io.on("leave", (inData, inCallback) => {
 
 }); /* End leave handler. */
 
+/**
+   * Client emits this to close a room.
+   *
+   * inData
+   *   { roomName : "" }
+   *
+   * Broadcast
+   *   { roomName : "", rooms : <the rooms collection> }
+   * Callback
+   *   <the rooms collection>
+   */
+io.on("close", (inData, inCallback) => {
+
+    console.log("\n\nMSG: close", inData);
+
+    delete rooms[inData.roomName];
+
+    // noinspection JSUnresolvedVariable
+    io.broadcast.emit("closed", { roomName: inData.roomName, rooms: rooms });
+    inCallback(rooms);
+
+}); /* End close handler. */
+
 // -------------------------------------------- MESSAGE MESSAGES -------------------------------------------
 
 
