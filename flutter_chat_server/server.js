@@ -89,6 +89,35 @@ io.on("invite", (inData, inCallback) => {
 }); /* End invite handler. */
 
 /**
+  * Client emits this to kick a user from a room.
+  *
+  * inData
+  *   { userName : "", roomName : "" }
+  *
+  * Callback
+  *   { status : "ok" }
+  * Broadcast
+  *   kicked <room descriptor>
+  */
+io.on("kick", (inData, inCallback) => {
+
+    console.log("\n\nMSG: kick", inData);
+
+    const room = rooms[inData.roomName];
+    console.log(`room = ${JSON.stringify(room)}`);
+    const users = room.users;
+    console.log(`users = ${JSON.stringify(users)}`);
+    delete users[inData.userName];
+    console.log(`users = ${JSON.stringify(users)}`);
+    console.log(`room = ${JSON.stringify(room)}`);
+
+    // noinspection JSUnresolvedVariable
+    io.broadcast.emit("kicked", room);
+    inCallback({ status: "ok" });
+
+}); /* End kickUser handler. */
+
+/**
   * Client emits this to get a list of all user currently known to the server.
   *
   * inData
