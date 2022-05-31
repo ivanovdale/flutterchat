@@ -67,6 +67,26 @@ io.on("validate", (inData, inCallback) => {
 
 }); /* End validate handler. */
 
+/**
+ * Client emits this to invite a user to a room.
+ *
+ * inData
+ *   { userName : "", roomName : "", inviterName : "" }
+ *
+ * Callback
+ *   { status : "ok" }
+ * Broadcast
+ *   invited { userName : "", inviterName : "", roomName : "" }
+ */
+io.on("invite", (inData, inCallback) => {
+
+    console.log("\n\nMSG: invite", inData);
+
+    // noinspection JSUnresolvedVariable
+    io.broadcast.emit("invited", inData);
+    inCallback({ status: "ok" });
+
+}); /* End invite handler. */
 
 /**
   * Client emits this to get a list of all user currently known to the server.
