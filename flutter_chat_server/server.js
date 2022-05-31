@@ -145,3 +145,41 @@ io.on("create", (inData, inCallback) => {
     }
 
 }); /* End create handler. */
+
+/**
+   * Client emits this to join a room.
+   *
+   * inData
+   *   { userName : "", roomName : "" }
+   *
+   * If the room is not full:
+   *   Broadcast
+   *     joined <room descriptor>
+   *   Callback
+   *     { status : "joined", room : <room descriptor> }
+   *
+   * If the room is full:
+   *   Callback
+   *     { status : "full" }
+   *
+   */
+io.on("join", (inData, inCallback) => {
+
+    console.log("\n\nMSG: join", inData);
+
+    const room = rooms[inData.roomName];
+    console.log(`room = ${JSON.stringify(room)}`);
+    if (Object.keys(room.users).length >= rooms.maxPeople) {
+        console.log("Room is full");
+        inCallback({ status: "full" });
+    } else {
+        console.log(`room.users BEFORE = ${JSON.stringify(room.users)}`);
+        room.users[inData.userName] = users[inData.userName];
+        console.log(`room.users AFTER = ${JSON.stringify(room.users)}`);
+        // noinspection JSUnresolvedVariable
+        io.broadcast.emit("joined", room);
+        // noinspection JSUnusedGlobalSymbols
+        inCallback({ status: "joined", room: room });
+    }
+
+}); /* End join handler. */
