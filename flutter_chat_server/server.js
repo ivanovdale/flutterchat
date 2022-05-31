@@ -183,3 +183,27 @@ io.on("join", (inData, inCallback) => {
     }
 
 }); /* End join handler. */
+
+// -------------------------------------------- MESSAGE MESSAGES -------------------------------------------
+
+
+/**
+ * Client emits this to post a message to a room.
+ *
+ * inData
+ *   { userName : "", roomName : "", message : "" }
+ *
+ * Callback
+ *   { status : "ok" }
+ * Broadcast
+ *   posted { userName : "", roomName : "", message : "" }
+ */
+io.on("post", (inData, inCallback) => {
+
+    console.log("\n\nMSG: post", inData);
+
+    // noinspection JSUnresolvedVariable
+    io.broadcast.emit("posted", inData);
+    inCallback({ status: "ok" });
+
+}); /* End post handler. */
