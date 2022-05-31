@@ -204,6 +204,30 @@ io.on("join", (inData, inCallback) => {
 
 }); /* End join handler. */
 
+/**
+   * Client emits this to leave a room.
+   *
+   * inData
+   *   { userName : "", roomName : "" }
+   *
+   * Broadcast
+   *   left <room descriptor>
+   * Callback
+   *   { status : "ok" }
+   */
+io.on("leave", (inData, inCallback) => {
+
+    console.log("\n\nMSG: leave", inData);
+
+    const room = rooms[inData.roomName];
+    delete room.users[inData.userName];
+
+    // noinspection JSUnresolvedVariable
+    io.broadcast.emit("left", room);
+    inCallback({ status: "ok" });
+
+}); /* End leave handler. */
+
 // -------------------------------------------- MESSAGE MESSAGES -------------------------------------------
 
 
